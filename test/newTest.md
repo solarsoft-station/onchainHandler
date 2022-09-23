@@ -1,7 +1,8 @@
 const { expect } = require("chai");
 const { loadFixture } = require("@nomicfoundation/hardhat-network-helpers");
+const hre = require("hardhat");
 
-describe("Smart Contracts", function () {
+describe("Smart Contracts", async function () {
   async function deploySet() {
     // Contracts are deployed using the first signer/account by default
     const [owner, otherAccount, oOtherAccount] = await ethers.getSigners();
@@ -33,9 +34,8 @@ describe("Smart Contracts", function () {
       nft3,
     };
   }
+
   it("ERC721 mints tokens", async function () {
-    const { owner, otherAccount, oOtherAccount, nft1, nft2, nft3 } =
-      await loadFixture(deploySet);
     const arr = [owner, otherAccount, oOtherAccount];
     for (var i = 0; i < arr.length; i++) {
       await nft1.connect(arr[i]).mint(2);
@@ -50,9 +50,8 @@ describe("Smart Contracts", function () {
       expect(await nft3.connect(arr[i]).balanceOf(arr[i].address)).to.equal(2);
     }
   });
+
   it("ERC721 set permissions for handler", async function () {
-    const { handler, owner, otherAccount, oOtherAccount, nft1, nft2, nft3 } =
-      await loadFixture(deploySet);
     await nft1.connect(oOtherAccount).setApprovalForAll(handler.address, true);
     await nft2.connect(otherAccount).setApprovalForAll(handler.address, true);
     await nft3.connect(owner).setApprovalForAll(handler.address, true);
@@ -65,22 +64,14 @@ describe("Smart Contracts", function () {
       .to.be.true;
   });
   it("Handler moves one token", async function () {
-    const { handler, owner, otherAccount, nft1 } = await loadFixture(deploySet);
-
-    await nft1.connect(owner).mint(2);
-    await nft1.connect(otherAccount).mint(2);
-    await nft1.connect(owner).approve(handler.address, 1);
-
-    
-      const bool = await handler
+    expect(
+      await handler
         .connect(owner)
         .sendOneERC721(owner.address, otherAccount.address, 1, nft1.address)
-        
-        console.log(await nft1.connect(owner).balanceOf(otherAccount.address), "okay")
-    
-    // expect(await nft1.connect(owner).balanceOf(otherAccount.address)).to.equal(
-    //   3
-    // );
-    // expect(await nft1.connect(owner).balanceOf(owner.address)).to.equal(1);
+    ).to.be.true;
+    expect(await nft1.connect(owner).balanceOf(otherAccount.address)).to.equal(
+      3
+    );
+    expect(await nft1.connect(owner).balanceOf(owner.address)).to.equal(1);
   });
 });

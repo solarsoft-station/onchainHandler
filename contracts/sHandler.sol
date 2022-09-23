@@ -2,7 +2,7 @@
 
 pragma solidity ^0.8.4;
 
-import "@openzeppelin/contracts/token/ERC721/IERC721.sol";
+import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 
 contract ClusterHandler {
@@ -72,12 +72,12 @@ contract ClusterHandler {
         uint256 tokenId,
         address tokenAddress
     ) public returns (bool) {
-        address _owner = IERC721(tokenAddress).ownerOf(tokenId);
+        address _owner = ERC721(tokenAddress).ownerOf(tokenId);
         bool success;
-        if (owner == _owner) {
-            IERC721(tokenAddress).transferFrom(owner, receiver, tokenId);
+        if(_owner == owner){
+            ERC721(tokenAddress).safeTransferFrom(_owner, receiver, tokenId);
             success = true;
-        } else {
+        } else{
             success = false;
             revert OwnerMismatch();
         }
@@ -93,10 +93,10 @@ contract ClusterHandler {
     ) public returns (bool) {
         bool success;
         for (uint256 i = 0; i < tokenIds.length; i++) {
-            address _owner = IERC721(tokenAddress).ownerOf(tokenIds[i]);
+            address _owner = ERC721(tokenAddress).ownerOf(tokenIds[i]);
 
             if (owner == _owner) {
-                IERC721(tokenAddress).transferFrom(
+                ERC721(tokenAddress).safeTransferFrom(
                     owner,
                     receiver,
                     tokenIds[i]
@@ -127,11 +127,11 @@ contract ClusterHandler {
         for (i = 0; i < addresses.length; i++) {
             uint256[] memory id = ids[i];
             for (j = 0; j < id.length; j++) {
-                // address _owner = IERC721(addresses[i]).ownerOf(id[j]);
+                // address _owner = ERC721(addresses[i]).ownerOf(id[j]);
                 // if (_owner == owner){
-                //      IERC721(addresses[i]).transferFrom(owner, receiver, id[j]);
+                //      ERC721(addresses[i]).transferFrom(owner, receiver, id[j]);
                 // }
-                IERC721(addresses[i]).transferFrom(owner, receiver, id[j]);
+                ERC721(addresses[i]).safeTransferFrom(owner, receiver, id[j]);
             }
         }
     }
@@ -145,9 +145,9 @@ contract ClusterHandler {
         bool success;
         if (addresses.length != ids.length) revert OneToOneMismatch();
         for (uint256 i = 0; i < addresses.length; i++) {
-            address _owner = IERC721(addresses[i]).ownerOf(ids[i]);
+            address _owner = ERC721(addresses[i]).ownerOf(ids[i]);
             if (owner == _owner) {
-                IERC721(addresses[i]).transferFrom(owner, receiver, ids[i]);
+                ERC721(addresses[i]).safeTransferFrom(owner, receiver, ids[i]);
                 success = true;
             } else {
                 success = false;
@@ -169,7 +169,7 @@ contract ClusterHandler {
             nfts memory n = c.ids[token];
             uint256[] memory id = n.ids;
             for (uint256 j = 0; j <= id.length; j++) {
-                IERC721(token).safeTransferFrom(owner, reciepient, id[j]);
+                ERC721(token).safeTransferFrom(owner, reciepient, id[j]);
             }
         }
         success = true;
@@ -196,7 +196,7 @@ contract ClusterHandler {
             nfts memory n = new_cluster.ids[token];
             uint256[] memory id = n.ids;
             for (uint256 j = 0; j <= id.length; j++) {
-                IERC721(token).safeTransferFrom(owner, reciepient, id[j]);
+                ERC721(token).safeTransferFrom(owner, reciepient, id[j]);
             }
         }
     }
