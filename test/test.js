@@ -70,17 +70,54 @@ describe("Smart Contracts", function () {
     await nft1.connect(owner).mint(2);
     await nft1.connect(otherAccount).mint(2);
     await nft1.connect(owner).approve(handler.address, 1);
-
-    
-      const bool = await handler
-        .connect(owner)
-        .sendOneERC721(owner.address, otherAccount.address, 1, nft1.address)
-        
-        console.log(await nft1.connect(owner).balanceOf(otherAccount.address), "okay")
-    
-    // expect(await nft1.connect(owner).balanceOf(otherAccount.address)).to.equal(
-    //   3
-    // );
-    // expect(await nft1.connect(owner).balanceOf(owner.address)).to.equal(1);
+    await handler
+      .connect(owner)
+      .sendOneERC721(owner.address, otherAccount.address, 1, nft1.address);
+    expect(await nft1.connect(owner).balanceOf(otherAccount.address)).to.equal(
+      3
+    );
   });
+  it("Handler moves 2 tokens", async function () {
+    const { handler, owner, otherAccount, nft1 } = await loadFixture(deploySet);
+
+    await nft1.connect(owner).mint(2);
+    await nft1.connect(otherAccount).mint(2);
+    await nft1.connect(owner).setApprovalForAll(handler.address, true);
+    await handler
+      .connect(owner)
+      .sendMultipleTokensOneERC721(
+        owner.address,
+        otherAccount.address,
+        [1, 2],
+        nft1.address
+      );
+    expect(await nft1.connect(owner).balanceOf(otherAccount.address)).to.equal(
+      4
+    );
+  });
+  
+  it("Handler moves 1 tokens from 2 contracts each", async function () {
+    const { handler, owner, otherAccount, nft1, nft2 } = await loadFixture(deploySet);
+
+    await nft1.connect(owner).mint(2);
+    await nft2.connect(owner).mint(2);
+    await nft1.connect(owner).setApprovalForAll(handler.address, true);
+    await nft2.connect(owner).setApprovalForAll(handler.address, true);
+    await handler
+      .connect(owner)
+      .sendOneTokenMultipleERC721(
+        [nft1.address, nft2.address],
+        [1, 1],
+        owner.address,
+        otherAccount.address,
+      );
+    expect(await nft1.connect(owner).balanceOf(otherAccount.address)).to.equal(
+      1
+    );
+    expect(await nft2.connect(owner).balanceOf(otherAccount.address)).to.equal(
+      1
+    );
+  });
+
+  // function sendOneTokenMultipleERC721( address[] calldata addresses, uint256[] calldata ids, address owner, address receiver )
 });
