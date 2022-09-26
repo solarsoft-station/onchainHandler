@@ -42,9 +42,6 @@ async function main() {
   console.log("ClusterHandler deployed to:", handler.address);
   console.log("test NFTs deployed to:\n", nft1.address, "\n", nft2.address, "\n", nft3.address)
 
-  // 0xF1C18D9777854254c9FbdAbFDa0c7Ac9F48e65f8- testAlienz on goerli
-  // 0xa3935b0eEca9E2A36619C8Ef121F551b17B86279- test on goerli
-}
 
 // We recommend this pattern to be able to use async/await everywhere
 // and properly handle errors.
