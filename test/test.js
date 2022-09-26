@@ -95,9 +95,11 @@ describe("Smart Contracts", function () {
       4
     );
   });
-  
+
   it("Handler moves 1 token each from 2 contracts", async function () {
-    const { handler, owner, otherAccount, nft1, nft2 } = await loadFixture(deploySet);
+    const { handler, owner, otherAccount, nft1, nft2 } = await loadFixture(
+      deploySet
+    );
 
     await nft1.connect(owner).mint(2);
     await nft2.connect(owner).mint(2);
@@ -109,7 +111,7 @@ describe("Smart Contracts", function () {
         [nft1.address, nft2.address],
         [1, 1],
         owner.address,
-        otherAccount.address,
+        otherAccount.address
       );
     expect(await nft1.connect(owner).balanceOf(otherAccount.address)).to.equal(
       1
@@ -119,7 +121,8 @@ describe("Smart Contracts", function () {
     );
   });
   it("Handler moves tokens from contracts", async function () {
-    const { handler, owner, otherAccount, nft1, nft2, nft3 } = await loadFixture(deploySet);
+    const { handler, owner, otherAccount, nft1, nft2, nft3 } =
+      await loadFixture(deploySet);
 
     await nft1.connect(owner).mint(2);
     await nft2.connect(owner).mint(2);
@@ -133,7 +136,7 @@ describe("Smart Contracts", function () {
         [nft1.address, nft2.address, nft3.address],
         [[1], [1, 2], [1]],
         owner.address,
-        otherAccount.address,
+        otherAccount.address
       );
     expect(await nft1.connect(owner).balanceOf(otherAccount.address)).to.equal(
       1
@@ -145,8 +148,4 @@ describe("Smart Contracts", function () {
       1
     );
   });
-
-  //function sendMultipleTokensMultipleERC721(
-   // address[] calldata addresses, uint256[][] calldata ids, address owner, address receiver)
 });
-
